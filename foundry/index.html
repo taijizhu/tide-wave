@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FOUNDRY Design</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one reading column for prose, figures run wider and scroll sideways on a phone. */
+:root {
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --fg: #1b2230;
+  --muted: #586274;
+  --line: #9aa3b2;
+  --edge: #3d4656;
+  --heart: #b3263a;
+  --heart-soft: #fbe9ec;
+  --fire: #b85c00;
+  --fire-soft: #fdf0e1;
+  --trade: #1f6f8b;
+  --trade-soft: #e3f1f6;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --panel: #1b212b; --fg: #e6e9ee; --muted: #a2abba; --line: #566174; --edge: #b9c1cd;
+    --heart: #f07083; --heart-soft: #3a1d24; --fire: #f0a24a; --fire-soft: #3a2a17;
+    --trade: #6cc3df; --trade-soft: #15303a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --panel: #1b212b; --fg: #e6e9ee; --muted: #a2abba; --line: #566174; --edge: #b9c1cd;
+  --heart: #f07083; --heart-soft: #3a1d24; --fire: #f0a24a; --fire-soft: #3a2a17;
+  --trade: #6cc3df; --trade-soft: #15303a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--fg); font: 16px/1.55 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+}
+main { max-width: 1240px; margin: 0 auto; display: grid; gap: 56px; }
+.prose { max-width: 68ch; }
+h1, h2 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); letter-spacing: 0.01em; line-height: 1.1; }
+h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); line-height: 1.2; }
+.eyebrow { font: 600 12px/1 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+p { margin: 0 0 12px; }
+.lede { font-size: 1.12rem; }
+header { display: grid; gap: 14px; }
+section { display: grid; gap: 14px; }
+figure { margin: 0; display: grid; gap: 12px; }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+.scroll svg { display: block; width: 100%; min-width: 900px; height: auto; }
+figcaption { color: var(--muted); font-size: 0.95rem; max-width: 80ch; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.fact { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; min-width: 0; }
+.fact strong { display: block; margin-bottom: 4px; }
+.fact span { color: var(--muted); font-size: 0.93rem; }
+code { font-family: var(--font-mono); font-size: 0.88em; }
+footer { color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+/* SVG vocabulary */
+.bx { fill: var(--panel); stroke: var(--line); stroke-width: 1.2; }
+.bx-heart { fill: var(--heart-soft); stroke: var(--heart); stroke-width: 2.2; }
+.bx-fire { fill: var(--fire-soft); stroke: var(--fire); stroke-width: 2; }
+.bx-trade { fill: var(--trade-soft); stroke: var(--trade); stroke-width: 2; }
+.bx-plain { fill: var(--bg); stroke: var(--line); stroke-width: 1; }
+.bx-term { fill: var(--panel); stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.t { fill: var(--fg); font: 600 13px var(--font-body); }
+.tl { fill: var(--fg); font: 600 18px var(--font-display); }
+.s { fill: var(--muted); font: 11.5px var(--font-body); }
+.m { fill: var(--fg); font: 11.5px var(--font-mono); }
+.sec { fill: var(--muted); font: 600 11px var(--font-body); letter-spacing: 0.12em; }
+.lab { fill: var(--edge); font: italic 11px var(--font-body); }
+.lab-r { fill: var(--heart); font: italic 11px var(--font-body); }
+.hd { fill: var(--heart); font: 600 13px var(--font-body); }
+.fd { fill: var(--fire); font: 600 13px var(--font-body); }
+.td { fill: var(--trade); font: 600 13px var(--font-body); }
+.e { stroke: var(--edge); stroke-width: 1.4; fill: none; }
+.e-r { stroke: var(--heart); stroke-width: 1.4; fill: none; stroke-dasharray: 5 4; }
+.e-d { stroke: var(--line); stroke-width: 1.2; fill: none; stroke-dasharray: 3 4; }
+.e-t { stroke: var(--trade); stroke-width: 1.6; fill: none; }
+.mk { fill: var(--edge); }
+.mk-r { fill: var(--heart); }
+.mk-t { fill: var(--trade); }
+.dot { fill: var(--edge); }
+.bus { fill: var(--heart-soft); stroke: var(--heart); stroke-width: 1.2; }
+@media (max-width: 640px) { body { padding-block: 24px 40px; } main { gap: 40px; } }
+</style>
+</head>
+<body>
+<main>
+
+<header class="prose">
+  <p class="eyebrow">Engineering design</p>
+  <h1>FOUNDRY</h1>
+  <p class="lede">FOUNDRY is the engineering framework of a one-person company. The company has one person, the operator. Its engineering workforce is AI agents from two vendors, Anthropic (Claude) and MiniMax. Built with Claude.</p>
+  <p>The company has two business units. FOUNDRY is the engineering business: work comes in, it is built, tested, shipped and probed. TIDE-WAVE is the trading business and today it is FOUNDRY's only customer. The engine itself knows nothing about trading; trading plugs in as sources of work and as the product that ships.</p>
+  <p>Three rules hold it together. Every piece of work is a bug record, and a bug is one step. Nobody pushes to the main branch; only the test farm merges. Every feature ships with a switch that turns it off in seconds without a deploy.</p>
+</header>
+
+<section aria-labelledby="h-system">
+  <div class="prose">
+    <p class="eyebrow">1 · The whole system</p>
+    <h2 id="h-system">Work flows through one bug database</h2>
+  </div>
+  <figure>
+    <div class="scroll">
+<svg viewBox="0 0 1200 900" role="img" aria-label="Work from eight sources is filed as bugs through a quality gate into the bug database. The Project Manager reads open bugs and spawns AI builder agents, which submit to the Crucible test farm. Crucible merges to the protected master branch or rejects back to the bug with a handoff. The Release Manager deploys to the trading business, whose next day produces the next findings. Every status move is published on an event bus that the other roles read.">
+  <defs>
+    <marker id="f1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="f1r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-r" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="f1t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-t" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+
+  <text class="sec" x="20" y="30">WORK COMES IN</text>
+  <text class="sec" x="290" y="30">THE CENTRE</text>
+  <text class="sec" x="620" y="30">BUILD AND VERIFY</text>
+  <text class="sec" x="920" y="30">DECIDE, SHIP, RUN</text>
+
+  <!-- Column A: vessels -->
+  <g>
+    <rect class="bx" x="20" y="50" width="210" height="46" rx="5"/><text class="t" x="32" y="69">Operator specs</text><text class="s" x="32" y="86">his requests, kept word for word</text>
+    <rect class="bx" x="20" y="106" width="210" height="46" rx="5"/><text class="t" x="32" y="125">Phone comments</text><text class="s" x="32" y="142">a reply to any push notification</text>
+    <rect class="bx" x="20" y="162" width="210" height="46" rx="5"/><text class="t" x="32" y="181">Live trading events</text><text class="s" x="32" y="198">trade monitor, exit guardians</text>
+    <rect class="bx" x="20" y="218" width="210" height="46" rx="5"/><text class="t" x="32" y="237">Nightly postmortems</text><text class="s" x="32" y="254">an agent reads the day's charts</text>
+    <rect class="bx" x="20" y="274" width="210" height="46" rx="5"/><text class="t" x="32" y="293">Sim and replay findings</text><text class="s" x="32" y="310">each loss read as its own case</text>
+    <rect class="bx" x="20" y="330" width="210" height="46" rx="5"/><text class="t" x="32" y="349">Error reports</text><text class="s" x="32" y="366">Sentry, test-farm failures</text>
+    <rect class="bx" x="20" y="386" width="210" height="46" rx="5"/><text class="t" x="32" y="405">Health monitors</text><text class="s" x="32" y="422">what stopped running</text>
+    <rect class="bx" x="20" y="442" width="210" height="46" rx="5"/><text class="t" x="32" y="461">Test Manager audit</text><text class="s" x="32" y="478">gaps in what is tested</text>
+    <path class="e" d="M230,73 H255 M230,129 H255 M230,185 H255 M230,241 H255 M230,297 H255 M230,353 H255 M230,409 H255 M230,465 H255 M255,73 V465"/>
+    <path class="e" d="M255,270 H288" marker-end="url(#f1a)"/>
+    <text class="lab" x="140" y="510">each source files a bug and</text>
+    <text class="lab" x="140" y="524">is recorded as its origin</text>
+  </g>
+
+  <!-- Column B: gate + heart -->
+  <rect class="bx" x="290" y="230" width="260" height="80" rx="5"/>
+  <text class="t" x="304" y="252">Quality gate</text>
+  <text class="s" x="304" y="270">Specific, measurable, achievable,</text>
+  <text class="s" x="304" y="285">result-driven, time-bound, with evidence.</text>
+  <text class="s" x="304" y="300">Fails → filed as rejected, never built.</text>
+  <path class="e" d="M420,310 V343" marker-end="url(#f1a)"/>
+  <text class="lab" x="428" y="331">passes → open</text>
+
+  <rect class="bx-heart" x="290" y="345" width="260" height="225" rx="16"/>
+  <text class="tl" x="306" y="374">Bug database</text>
+  <text class="hd" x="306" y="393">DiscoveredBugs</text>
+  <text class="s" x="306" y="418">One record per unit of work: a fix,</text>
+  <text class="s" x="306" y="433">a feature, a study, an ops run.</text>
+  <text class="s" x="306" y="456">• one bug = one step</text>
+  <text class="s" x="306" y="473">• order is a dependency link, not prose</text>
+  <text class="s" x="306" y="490">• priority P0–P3, severity S1–S3</text>
+  <text class="s" x="306" y="507">• origin: which source filed it</text>
+  <text class="s" x="306" y="524">• every status move goes through</text>
+  <text class="s" x="318" y="539">one function and is audited</text>
+  <text class="s" x="306" y="558">The roles never call each other.</text>
+
+  <!-- Column C -->
+  <rect class="bx" x="620" y="50" width="250" height="84" rx="5"/>
+  <text class="t" x="634" y="71">Project Manager</text>
+  <text class="s" x="634" y="89">WHAT WORK: reasons the next step</text>
+  <text class="s" x="634" y="104">for every open bug and acts on it;</text>
+  <text class="s" x="634" y="119">decides how many agents run at once</text>
+  <path class="e" d="M550,392 C585,392 585,110 618,110" marker-end="url(#f1a)"/>
+  <text class="lab" x="560" y="200" transform="rotate(-90 572 200)">reads open bugs</text>
+
+  <path class="e" d="M745,134 V168" marker-end="url(#f1a)"/>
+  <text class="lab" x="752" y="156">spawns, picks the vendor</text>
+  <rect class="bx" x="620" y="170" width="250" height="96" rx="5"/>
+  <text class="t" x="634" y="191">AI builder agents</text>
+  <text class="s" x="634" y="209">Claude (Anthropic) · MiniMax</text>
+  <text class="s" x="634" y="224">one git worktree and feature branch</text>
+  <text class="s" x="634" y="239">per bug; builds from the bug record,</text>
+  <text class="s" x="634" y="254">never from another agent's memory</text>
+  <path class="e" d="M745,266 V318" marker-end="url(#f1a)"/>
+  <text class="lab" x="752" y="296">submits the branch</text>
+
+  <rect class="bx-fire" x="620" y="320" width="250" height="220" rx="8"/>
+  <text class="tl" x="636" y="348">Crucible</text>
+  <text class="fd" x="636" y="366">the gated check-in farm</text>
+  <text class="m" x="636" y="392">1 an idle farm box claims it</text>
+  <text class="m" x="636" y="412">2 rebase on current master</text>
+  <text class="m" x="636" y="432">3 rule gates + full test suite</text>
+  <text class="m" x="636" y="452">4 trading replays of pinned cases</text>
+  <text class="m" x="636" y="472">5 AI code review (advisory)</text>
+  <text class="m" x="636" y="492">6 one merger at a time</text>
+  <text class="m" x="636" y="508">  fast-forwards master</text>
+  <text class="s" x="636" y="530">Pass: bug resolved with the merge sha</text>
+  <path class="e-r" d="M620,505 H552" marker-end="url(#f1r)"/>
+  <text class="lab-r" x="556" y="586">reject: bug reopens with a handoff</text>
+  <text class="lab-r" x="556" y="600">(kept branch, failing tests, log)</text>
+  <path class="e-r" d="M586,505 V575"/>
+
+  <!-- Column D -->
+  <rect class="bx" x="920" y="50" width="260" height="62" rx="5"/>
+  <text class="t" x="934" y="71">Operator</text>
+  <text class="s" x="934" y="89">the one person: specs, vetoes,</text>
+  <text class="s" x="934" y="104">the decisions only he can make</text>
+
+  <rect class="bx" x="920" y="146" width="260" height="84" rx="5"/>
+  <text class="t" x="934" y="167">Chief of Staff</text>
+  <text class="s" x="934" y="185">WHAT THE OPERATOR SEES: approves</text>
+  <text class="s" x="934" y="200">routine PM requests itself, escalates</text>
+  <text class="s" x="934" y="215">live-money or irreversible ones</text>
+  <path class="e" d="M870,120 C895,120 895,180 918,180" marker-end="url(#f1a)"/>
+  <text class="lab" x="900" y="140">asks</text>
+  <path class="e" d="M1050,146 V114" marker-end="url(#f1a)"/>
+  <text class="lab" x="1058" y="134">by exception, to his phone</text>
+
+  <rect class="bx" x="920" y="300" width="260" height="56" rx="5"/>
+  <text class="t" x="934" y="322">master branch (protected)</text>
+  <text class="s" x="934" y="340">only the Crucible merger pushes here</text>
+  <path class="e" d="M870,500 C900,500 895,328 918,328" marker-end="url(#f1a)"/>
+  <text class="lab" x="878" y="298">merge</text>
+
+  <path class="e" d="M1050,356 V383" marker-end="url(#f1a)"/>
+  <rect class="bx" x="920" y="385" width="260" height="76" rx="5"/>
+  <text class="t" x="934" y="406">Release Manager</text>
+  <text class="s" x="934" y="424">WHAT SHIPS: GO/HOLD on accepted work,</text>
+  <text class="s" x="934" y="439">deploys the tested sha, restarts the</text>
+  <text class="s" x="934" y="454">services that run the changed code</text>
+  <path class="e" d="M1050,461 V488" marker-end="url(#f1a)"/>
+
+  <rect class="bx-trade" x="920" y="490" width="260" height="104" rx="8"/>
+  <text class="tl" x="936" y="516">TIDE-WAVE</text>
+  <text class="td" x="936" y="534">the trading business, the customer</text>
+  <text class="s" x="936" y="553">every feature behind a hot switch,</text>
+  <text class="s" x="936" y="568">ON by default, off in seconds</text>
+  <text class="s" x="936" y="583">with no restart and no deploy</text>
+
+  <!-- Event bus -->
+  <rect class="bus" x="290" y="616" width="890" height="36" rx="4"/>
+  <text class="hd" x="304" y="639">Event bus</text>
+  <text class="s" x="380" y="639">every status move is written to BugEvents and published live; roles and agents subscribe instead of polling</text>
+  <path class="e" d="M420,570 V614" marker-end="url(#f1a)"/>
+
+  <!-- Roles beside the flow -->
+  <text class="sec" x="260" y="690">ROLES BESIDE THE FLOW · EACH DECIDES ONE THING · THEY HAND OFF THROUGH BUG STATES</text>
+  <g>
+    <rect class="bx" x="260" y="704" width="145" height="108" rx="5"/>
+    <text class="t" x="270" y="724">Test Manager</text>
+    <text class="s" x="270" y="742">WHAT IS TESTED</text>
+    <text class="s" x="270" y="760">scores the confidence</text>
+    <text class="s" x="270" y="775">each build earned;</text>
+    <text class="s" x="270" y="790">audits the suite</text>
+
+    <rect class="bx" x="415" y="704" width="145" height="108" rx="5"/>
+    <text class="t" x="425" y="724">Infrastructure</text>
+    <text class="s" x="425" y="742">WHAT RUNS</text>
+    <text class="s" x="425" y="760">fleet matches its</text>
+    <text class="s" x="425" y="775">manifests; restarts</text>
+    <text class="s" x="425" y="790">or files a bug</text>
+
+    <rect class="bx" x="570" y="704" width="145" height="108" rx="5"/>
+    <text class="t" x="580" y="724">Risk Manager</text>
+    <text class="s" x="580" y="742">WHAT SIZE WE TRADE</text>
+    <text class="s" x="580" y="760">only through sizing</text>
+    <text class="s" x="580" y="775">switches, inside the</text>
+    <text class="s" x="580" y="790">operator's bounds</text>
+
+    <rect class="bx" x="725" y="704" width="145" height="108" rx="5"/>
+    <text class="t" x="735" y="724">Public Relations</text>
+    <text class="s" x="735" y="742">WHAT CLIENTS HEAR</text>
+    <text class="s" x="735" y="760">client messages</text>
+    <text class="s" x="735" y="775">and their schedule</text>
+
+    <rect class="bx" x="880" y="704" width="145" height="108" rx="5"/>
+    <text class="t" x="890" y="724">Expense + Tax</text>
+    <text class="s" x="890" y="742">WHAT WE SPEND, OWE</text>
+    <text class="s" x="890" y="760">costs beside earnings;</text>
+    <text class="s" x="890" y="775">quarterly estimates;</text>
+    <text class="s" x="890" y="790">never pay or file</text>
+
+    <rect class="bx" x="1035" y="704" width="145" height="108" rx="5"/>
+    <text class="t" x="1045" y="724">Compliance</text>
+    <text class="s" x="1045" y="742">WHAT WE MAY DO,</text>
+    <text class="s" x="1045" y="757">WHO HOLDS THE KEYS</text>
+    <text class="s" x="1045" y="775">tracks terms and key</text>
+    <text class="s" x="1045" y="790">expiry; reminds only</text>
+    <path class="e-d" d="M332,704 V652 M487,704 V652 M642,704 V652 M797,704 V652 M952,704 V652 M1107,704 V652"/>
+  </g>
+
+  <!-- Geared flywheel loop -->
+  <path class="e-t" d="M1180,540 H1192 V858 H125 V492" marker-end="url(#f1t)"/>
+  <text class="lab" x="140" y="880">the next trading day produces the next findings: the trading flywheel and the engineering flywheel turn each other</text>
+</svg>
+    </div>
+    <figcaption>Work arrives from many sources and becomes a bug record. The bug database sits at the centre: the named roles never call one another; each one reads bug states and moves them. A rejected check-in goes back to its bug with everything the next agent needs, because the next agent may be a different model from a different vendor. The loop at the bottom closes the circle: what ships changes the next trading day, and that day files the next bugs.</figcaption>
+  </figure>
+</section>
+
+<section aria-labelledby="h-life">
+  <div class="prose">
+    <p class="eyebrow">2 · The bug lifecycle</p>
+    <h2 id="h-life">Every hand-off is a status move on the bus</h2>
+  </div>
+  <figure>
+    <div class="scroll">
+<svg viewBox="0 0 1200 600" role="img" aria-label="Bug states: a filed bug passes the quality gate to open or is rejected. Open moves to resolving when the Project Manager spawns a builder, to in_crucible on submit, then to resolved on a merge or back to open on a reject. A merge that reaches no decision, or repeated rejects, park the bug in reviewing. Every move publishes one event on the bus.">
+  <defs>
+    <marker id="f2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="f2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-r" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+
+  <!-- start + gate -->
+  <circle class="dot" cx="40" cy="170" r="7"/>
+  <text class="s" x="22" y="198">filed</text>
+  <path class="e" d="M47,170 H108" marker-end="url(#f2a)"/>
+  <polygon class="bx" points="160,130 200,170 160,210 120,170"/>
+  <text class="s" x="160" y="167" text-anchor="middle">quality</text>
+  <text class="s" x="160" y="181" text-anchor="middle">gate</text>
+
+  <!-- rejected -->
+  <rect class="bx-term" x="85" y="300" width="150" height="56" rx="28"/>
+  <text class="t" x="160" y="324" text-anchor="middle">rejected</text>
+  <text class="s" x="160" y="341" text-anchor="middle">never built</text>
+  <path class="e-r" d="M160,210 V298" marker-end="url(#f2r)"/>
+  <text class="lab-r" x="168" y="250">fails the</text>
+  <text class="lab-r" x="168" y="264">S.M.A.R.T. test</text>
+  <path class="e" d="M235,328 C290,328 300,240 330,200" marker-end="url(#f2a)"/>
+  <text class="lab" x="252" y="300">corrected re-file</text>
+
+  <!-- open -->
+  <path class="e" d="M200,170 H298" marker-end="url(#f2a)"/>
+  <text class="lab" x="216" y="160">passes</text>
+  <rect class="bx" x="300" y="142" width="160" height="56" rx="28"/>
+  <text class="t" x="380" y="166" text-anchor="middle">open</text>
+  <text class="s" x="380" y="183" text-anchor="middle">waiting for an agent</text>
+
+  <!-- resolving -->
+  <path class="e" d="M460,170 H548" marker-end="url(#f2a)"/>
+  <text class="lab" x="468" y="160">PM spawns</text>
+  <text class="lab" x="468" y="190">atomic claim</text>
+  <rect class="bx" x="550" y="142" width="160" height="56" rx="28"/>
+  <text class="t" x="630" y="166" text-anchor="middle">resolving</text>
+  <text class="s" x="630" y="183" text-anchor="middle">an agent builds the fix</text>
+
+  <!-- in_crucible -->
+  <path class="e" d="M710,170 H798" marker-end="url(#f2a)"/>
+  <text class="lab" x="718" y="160">submit</text>
+  <rect class="bx-fire" x="800" y="142" width="160" height="56" rx="28"/>
+  <text class="t" x="880" y="166" text-anchor="middle">in_crucible</text>
+  <text class="s" x="880" y="183" text-anchor="middle">the farm tests it</text>
+
+  <!-- resolved -->
+  <path class="e" d="M960,170 H1028" marker-end="url(#f2a)"/>
+  <text class="lab" x="966" y="160">merged</text>
+  <rect class="bx" x="1030" y="142" width="150" height="56" rx="28"/>
+  <text class="t" x="1105" y="166" text-anchor="middle">resolved</text>
+  <text class="s" x="1105" y="183" text-anchor="middle">merge sha stamped</text>
+
+  <!-- reject loop back -->
+  <path class="e-r" d="M880,142 C880,70 380,70 380,140" marker-end="url(#f2r)"/>
+  <text class="lab-r" x="630" y="72" text-anchor="middle">rejected or rebase conflict: back to open with a handoff (kept branch, failing tests, log tail, attempt count)</text>
+
+  <!-- reviewing -->
+  <rect class="bx" x="800" y="300" width="160" height="56" rx="28"/>
+  <text class="t" x="880" y="324" text-anchor="middle">reviewing</text>
+  <text class="s" x="880" y="341" text-anchor="middle">needs a look</text>
+  <path class="e" d="M880,198 V298" marker-end="url(#f2a)"/>
+  <text class="lab" x="888" y="226">merged, but touches no</text>
+  <text class="lab" x="888" y="240">file a decision reads</text>
+  <text class="lab" x="888" y="262">or rejected 3 times</text>
+  <text class="lab" x="888" y="276">in a row (escalated)</text>
+  <path class="e" d="M800,328 C620,328 400,300 385,200" marker-end="url(#f2a)"/>
+  <text class="lab" x="560" y="318">triage sends it back to work</text>
+
+  <!-- closed -->
+  <rect class="bx-term" x="1030" y="300" width="150" height="56" rx="28"/>
+  <text class="t" x="1105" y="324" text-anchor="middle">closed</text>
+  <text class="s" x="1105" y="341" text-anchor="middle">verified</text>
+  <path class="e" d="M1105,198 V298" marker-end="url(#f2a)"/>
+  <text class="lab" x="1112" y="240">reviewer</text>
+  <text class="lab" x="1112" y="254">checks it</text>
+  <text class="lab" x="1112" y="268">landed, live</text>
+  <path class="e" d="M960,328 H1028" marker-end="url(#f2a)"/>
+
+  <!-- side states -->
+  <rect class="bx-plain" x="300" y="388" width="430" height="44" rx="5"/>
+  <text class="s" x="314" y="408">Also: wontfix (decided not to fix) and escalated (waiting on a human).</text>
+  <text class="s" x="314" y="423">Terminal states: resolved, closed, wontfix, rejected. Dashed outline = end state.</text>
+
+  <!-- bus -->
+  <rect class="bus" x="20" y="470" width="1160" height="40" rx="4"/>
+  <text class="hd" x="36" y="495">Event bus</text>
+  <text class="s" x="116" y="495">each arrow above is one guarded status move → one durable BugEvents row + one live message: fingerprint, from, to, actor, note, sha, time</text>
+  <path class="e-d" d="M160,356 V470 M380,198 V470 M630,198 V470 M880,356 V470 M1105,356 V470"/>
+  <text class="s" x="20" y="540">Who listens:</text>
+  <text class="m" x="110" y="540">the builder agent waits on its own bug until resolved</text>
+  <text class="m" x="110" y="560">the Project Manager picks the next step from the new state</text>
+  <text class="m" x="110" y="580">the code reviewer's verdict rides the same bus, so the submitter sees it at once</text>
+  <text class="s" x="760" y="560">A move from a state that already changed loses</text>
+  <text class="s" x="760" y="576">the race: two agents cannot claim one bug.</text>
+</svg>
+    </div>
+    <figcaption>States come from the lifecycle module's list: open, resolving, in_crucible, resolved, reviewing, closed, wontfix, escalated, rejected. Each move is an atomic database update guarded on the state the mover expected, and each move publishes one event, so an agent subscribes to its bug instead of polling it.</figcaption>
+  </figure>
+</section>
+
+<section aria-labelledby="h-crucible">
+  <div class="prose">
+    <p class="eyebrow">3 · A check-in through Crucible</p>
+    <h2 id="h-crucible">Cheapest checks first, one merger at the end</h2>
+  </div>
+  <figure>
+    <div class="scroll">
+<svg viewBox="0 0 1200 520" role="img" aria-label="A check-in's path: submit, queue, claim by an idle farm box, rebase on master, rule gates, smoke tests, full unit suite, performance budget, release-tier reads, AI code review, trading replays in parallel with artifact gates, then a serialized fast-forward merge. A failure at any blocking stage rejects the check-in, leaves master untouched and reopens the bug with a handoff.">
+  <defs>
+    <marker id="f3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="f3r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-r" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+  <!-- Row 1 left to right -->
+  <g>
+    <rect class="bx" x="20" y="40" width="165" height="88" rx="5"/>
+    <text class="t" x="32" y="61">1 Submit</text>
+    <text class="s" x="32" y="79">the agent pushes its</text>
+    <text class="s" x="32" y="94">branch, never master,</text>
+    <text class="s" x="32" y="109">and moves on</text>
+
+    <rect class="bx" x="210" y="40" width="165" height="88" rx="5"/>
+    <text class="t" x="222" y="61">2 Queue</text>
+    <text class="s" x="222" y="79">queued; a change to the</text>
+    <text class="s" x="222" y="94">live trading path is held,</text>
+    <text class="s" x="222" y="109">then released by auto-ack</text>
+
+    <rect class="bx" x="400" y="40" width="165" height="88" rx="5"/>
+    <text class="t" x="412" y="61">3 Claim</text>
+    <text class="s" x="412" y="79">an idle farm box takes it</text>
+    <text class="s" x="412" y="94">atomically; one suite per</text>
+    <text class="s" x="412" y="109">box, many boxes at once</text>
+
+    <rect class="bx" x="590" y="40" width="165" height="88" rx="5"/>
+    <text class="t" x="602" y="61">4 Rebase</text>
+    <text class="s" x="602" y="79">onto current master;</text>
+    <text class="s" x="602" y="94">a release is frozen once</text>
+    <text class="s" x="602" y="109">and that exact sha ships</text>
+
+    <rect class="bx" x="780" y="40" width="165" height="88" rx="5"/>
+    <text class="t" x="792" y="61">5 Rule gates</text>
+    <text class="s" x="792" y="79">static checks over the</text>
+    <text class="s" x="792" y="94">diff: switches, studies,</text>
+    <text class="s" x="792" y="109">time handling, imports</text>
+
+    <rect class="bx" x="970" y="40" width="165" height="88" rx="5"/>
+    <text class="t" x="982" y="61">6 Smoke tests</text>
+    <text class="s" x="982" y="79">a fast build check;</text>
+    <text class="s" x="982" y="94">a broken branch fails</text>
+    <text class="s" x="982" y="109">in seconds</text>
+    <path class="e" d="M185,84 H208" marker-end="url(#f3a)"/><path class="e" d="M375,84 H398" marker-end="url(#f3a)"/><path class="e" d="M565,84 H588" marker-end="url(#f3a)"/><path class="e" d="M755,84 H778" marker-end="url(#f3a)"/><path class="e" d="M945,84 H968" marker-end="url(#f3a)"/>
+    <path class="e" d="M1135,84 H1165 V316 H1137" marker-end="url(#f3a)"/>
+  </g>
+
+  <!-- Reject lane -->
+  <rect class="bus" x="20" y="168" width="1115" height="64" rx="4"/>
+  <text class="hd" x="36" y="192">Rejected · master untouched</text>
+  <text class="s" x="36" y="210">the failure fires at once and the bug reopens with a durable handoff: reason, failing tests, log tail,</text>
+  <text class="s" x="36" y="224">the kept branch, attempt count. After 3 rejects in a row the bug goes to review for a human.</text>
+  <path class="e-r" d="M672,128 V166" marker-end="url(#f3r)"/><path class="e-r" d="M862,128 V166" marker-end="url(#f3r)"/><path class="e-r" d="M1052,128 V166" marker-end="url(#f3r)"/>
+  <text class="lab-r" x="680" y="150">conflict</text>
+
+  <!-- Row 2 right to left -->
+  <g>
+    <rect class="bx" x="970" y="272" width="165" height="88" rx="5"/>
+    <text class="t" x="982" y="293">7 Unit suite</text>
+    <text class="s" x="982" y="311">the full suite in its own</text>
+    <text class="s" x="982" y="326">checkout and environment</text>
+
+    <rect class="bx" x="780" y="272" width="165" height="88" rx="5"/>
+    <text class="t" x="792" y="293">8 Time budget</text>
+    <text class="s" x="792" y="311">tests over 10 s are named;</text>
+    <text class="s" x="792" y="326">a slow test usually hides</text>
+    <text class="s" x="792" y="341">a live call. Advisory today</text>
+
+    <rect class="bx" x="590" y="272" width="165" height="88" rx="5"/>
+    <text class="t" x="602" y="293">9 Release reads</text>
+    <text class="s" x="602" y="311">scenario sims, speed</text>
+    <text class="s" x="602" y="326">ratchet, Test Manager</text>
+    <text class="s" x="602" y="341">confidence; gate deploys</text>
+
+    <rect class="bx" x="400" y="272" width="165" height="88" rx="5"/>
+    <text class="t" x="412" y="293">10 AI code review</text>
+    <text class="s" x="412" y="311">advisory; MiniMax, Claude</text>
+    <text class="s" x="412" y="326">as fallback; comments are</text>
+    <text class="s" x="412" y="341">written into the bug</text>
+
+    <rect class="bx" x="210" y="272" width="165" height="88" rx="5"/>
+    <text class="t" x="222" y="293">11 Trading replays</text>
+    <text class="s" x="222" y="311">pinned real-day cases and</text>
+    <text class="s" x="222" y="326">artifact gates, run in</text>
+    <text class="s" x="222" y="341">parallel</text>
+
+    <rect class="bx-fire" x="20" y="272" width="165" height="88" rx="5"/>
+    <text class="t" x="32" y="293">12 Merge</text>
+    <text class="s" x="32" y="311">one merge lock for the</text>
+    <text class="s" x="32" y="326">whole farm: fast-forward</text>
+    <text class="s" x="32" y="341">master and push</text>
+    <path class="e" d="M970,316 H947" marker-end="url(#f3a)"/><path class="e" d="M780,316 H757" marker-end="url(#f3a)"/><path class="e" d="M590,316 H567" marker-end="url(#f3a)"/><path class="e" d="M400,316 H377" marker-end="url(#f3a)"/><path class="e" d="M210,316 H187" marker-end="url(#f3a)"/>
+    <path class="e-r" d="M1052,272 V234" marker-end="url(#f3r)"/><path class="e-r" d="M292,272 V234" marker-end="url(#f3r)"/>
+  </g>
+
+  <!-- Outcome -->
+  <path class="e" d="M102,360 V398" marker-end="url(#f3a)"/>
+  <rect class="bx" x="20" y="400" width="355" height="62" rx="5"/>
+  <text class="t" x="32" y="421">Accepted</text>
+  <text class="s" x="32" y="439">bug resolved with the merge sha and test count;</text>
+  <text class="s" x="32" y="454">the Release Manager reads the release-tier results</text>
+  <path class="e" d="M375,431 H408" marker-end="url(#f3a)"/>
+  <rect class="bx" x="410" y="400" width="345" height="62" rx="5"/>
+  <text class="t" x="422" y="421">Master moved during the merge</text>
+  <text class="s" x="422" y="439">the check-in is requeued for a fresh rebase;</text>
+  <text class="s" x="422" y="454">after 3 lost races it is rejected</text>
+  <rect class="bx-plain" x="780" y="400" width="400" height="62" rx="5"/>
+  <text class="s" x="792" y="421">Every queue move (submit, ack, claim, accept, reject,</text>
+  <text class="s" x="792" y="437">conflict, requeue) is published on the check-in bus;</text>
+  <text class="s" x="792" y="453">the submitter watches it instead of waiting in silence.</text>
+  <text class="s" x="20" y="500">Stages 4–7 and 11 can reject. Stage 8 is advisory today. Stage 9 holds a deploy, not a merge. Stage 10 records feedback and never blocks; its blocking mode sits behind a switch that is off.</text>
+</svg>
+    </div>
+    <figcaption>Crucible is the only path to the main branch. The farm boxes pull work from a shared queue; there is no central dispatcher. Test passes run in parallel across boxes, and only the final merge is serialized. Stage 5 also requires a recorded study for any new trading rule switch, and stage 11 replays the trading cases a change can touch.</figcaption>
+  </figure>
+  <div class="facts" role="list">
+    <div class="fact" role="listitem"><strong>A moved base costs only what changed</strong><span>Each stage result is stored under a digest of the bytes it read, so a rebase re-runs only the stages whose inputs changed.</span></div>
+    <div class="fact" role="listitem"><strong>A merge that would void a run waits</strong><span>Another check-in that changes files a running stage reads waits at its merge step, in claim order. It is never rejected for waiting.</span></div>
+    <div class="fact" role="listitem"><strong>A busy box is untouchable</strong><span>The claim lease and box heartbeat answer "is this box busy". No deploy, restart or reclaim touches a box with a run in flight.</span></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-farm">
+  <div class="prose">
+    <p class="eyebrow">4 · The machine farm</p>
+    <h2 id="h-farm">Machines by role</h2>
+    <p>The fleet is a set of small Mac machines, each with a committed manifest of the services it runs. Several machines hold more than one role, so the counts below overlap; the notes say where.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+<svg viewBox="0 0 1200 640" role="img" aria-label="Machines by role. One database primary holds the database, the live event bus and the shared file store; two replica secondaries follow it. One of the secondaries runs live trading and the other is the head of the compute cluster for replays. Five machines are eligible for the Crucible test farm. Managers run on three machines. One stable and one beta web machine. One dev machine where the operator works. All roles read and write the database primary.">
+  <defs>
+    <marker id="f4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+
+  <!-- centre: DB primary -->
+  <rect class="bx-heart" x="450" y="250" width="300" height="120" rx="10"/>
+  <text class="tl" x="466" y="278">Database primary</text>
+  <text class="t" x="734" y="278" text-anchor="end">×1</text>
+  <text class="s" x="466" y="300">document database (writable primary),</text>
+  <text class="s" x="466" y="316">the live event bus (pub/sub),</text>
+  <text class="s" x="466" y="332">the shared snapshot file store</text>
+  <text class="s" x="466" y="356">bugs, check-in queue and events live here</text>
+
+  <!-- secondaries -->
+  <rect class="bx" x="40" y="250" width="300" height="120" rx="8"/>
+  <text class="t" x="56" y="274">Database secondaries</text>
+  <text class="t" x="324" y="274" text-anchor="end">×2</text>
+  <text class="s" x="56" y="294">voting replicas of the primary;</text>
+  <text class="s" x="56" y="310">three members in one replica set</text>
+  <text class="s" x="56" y="334">one also runs live trading,</text>
+  <text class="s" x="56" y="350">the other is the compute-cluster head</text>
+  <path class="e" d="M340,310 H448" marker-end="url(#f4a)" marker-start="url(#f4a)"/>
+  <text class="lab" x="360" y="302">replicate</text>
+
+  <!-- dev box -->
+  <rect class="bx" x="40" y="40" width="300" height="120" rx="8"/>
+  <text class="t" x="56" y="64">Dev box</text>
+  <text class="t" x="324" y="64" text-anchor="end">×1</text>
+  <text class="s" x="56" y="84">the operator's terminal and the</text>
+  <text class="s" x="56" y="100">coordinating agent sessions;</text>
+  <text class="s" x="56" y="116">feature work in git worktrees,</text>
+  <text class="s" x="56" y="132">pushed as branches only</text>
+
+  <!-- code host -->
+  <rect class="bx-plain" x="450" y="40" width="300" height="84" rx="8"/>
+  <text class="t" x="466" y="64">Code host (git remote)</text>
+  <text class="s" x="466" y="84">feature branches from agents;</text>
+  <text class="s" x="466" y="100">master, written only by the farm merger</text>
+  <path class="e" d="M340,82 H448" marker-end="url(#f4a)"/>
+  <text class="lab" x="356" y="74">push branch</text>
+
+  <!-- managers -->
+  <rect class="bx" x="860" y="40" width="300" height="120" rx="8"/>
+  <text class="t" x="876" y="64">Manager boxes</text>
+  <text class="t" x="1144" y="64" text-anchor="end">×3</text>
+  <text class="s" x="876" y="84">Project, Release, Infrastructure</text>
+  <text class="s" x="876" y="100">Managers share one; builder agents</text>
+  <text class="s" x="876" y="116">are spawned there. Risk, PR, Expense,</text>
+  <text class="s" x="876" y="132">Compliance on a second; Test Manager</text>
+  <text class="s" x="876" y="148">on the research box</text>
+  <path class="e" d="M860,140 C800,180 700,200 650,248" marker-end="url(#f4a)"/>
+  <text class="lab" x="770" y="196">read and move bugs</text>
+  <path class="e" d="M860,70 H752" marker-end="url(#f4a)"/>
+  <text class="lab" x="772" y="62">push branches</text>
+
+  <!-- crucible farm -->
+  <rect class="bx-fire" x="860" y="250" width="300" height="120" rx="8"/>
+  <text class="t" x="876" y="274">Crucible farm</text>
+  <text class="t" x="1144" y="274" text-anchor="end">×5</text>
+  <text class="s" x="876" y="294">machines on the eligible list; each runs</text>
+  <text class="s" x="876" y="310">one runner that pulls the queue and</text>
+  <text class="s" x="876" y="326">tests one check-in at a time</text>
+  <text class="s" x="876" y="350">one also serves the beta web site,</text>
+  <text class="s" x="876" y="364">one also hosts managers</text>
+  <path class="e" d="M860,310 H752" marker-end="url(#f4a)"/>
+  <text class="lab" x="772" y="302">pull queue</text>
+  <path class="e" d="M960,250 C960,200 760,150 720,126" marker-end="url(#f4a)"/>
+  <text class="lab" x="900" y="212">merge master</text>
+
+  <!-- live trading -->
+  <rect class="bx-trade" x="40" y="460" width="300" height="120" rx="8"/>
+  <text class="t" x="56" y="484">Live trading</text>
+  <text class="t" x="324" y="484" text-anchor="end">×1</text>
+  <text class="s" x="56" y="504">the trading engine, broker streams,</text>
+  <text class="s" x="56" y="520">account monitors and exit guardians;</text>
+  <text class="s" x="56" y="536">also a database secondary</text>
+  <text class="s" x="56" y="560">its services restart only on a deploy</text>
+  <path class="e" d="M300,460 C360,420 440,400 480,372" marker-end="url(#f4a)" marker-start="url(#f4a)"/>
+  <text class="lab" x="356" y="434">orders, events</text>
+
+  <!-- ray -->
+  <rect class="bx" x="450" y="460" width="300" height="120" rx="8"/>
+  <text class="t" x="466" y="484">Compute cluster</text>
+  <text class="t" x="734" y="484" text-anchor="end">1 head</text>
+  <text class="s" x="466" y="504">the head (also a database secondary)</text>
+  <text class="s" x="466" y="520">schedules replay and training units on</text>
+  <text class="s" x="466" y="536">workers across the boxes; documented</text>
+  <text class="s" x="466" y="552">as a 12-node cluster. Pure compute,</text>
+  <text class="s" x="466" y="568">never test runs or live API calls.</text>
+  <path class="e" d="M600,460 V372" marker-end="url(#f4a)"/>
+  <text class="lab" x="608" y="420">store every unit</text>
+
+  <!-- web + research -->
+  <rect class="bx" x="860" y="460" width="140" height="120" rx="8"/>
+  <text class="t" x="872" y="484">Web</text>
+  <text class="t" x="988" y="484" text-anchor="end">×2</text>
+  <text class="s" x="872" y="504">stable dashboard</text>
+  <text class="s" x="872" y="520">and a beta site</text>
+  <text class="s" x="872" y="544">the beta shares</text>
+  <text class="s" x="872" y="560">a farm machine</text>
+
+  <rect class="bx" x="1020" y="460" width="140" height="120" rx="8"/>
+  <text class="t" x="1032" y="484">Research</text>
+  <text class="t" x="1148" y="484" text-anchor="end">×1</text>
+  <text class="s" x="1032" y="504">default replay</text>
+  <text class="s" x="1032" y="520">lanes, data sync,</text>
+  <text class="s" x="1032" y="536">Test Manager</text>
+  <path class="e" d="M930,460 C900,420 800,400 752,360" marker-end="url(#f4a)"/>
+  <path class="e" d="M1090,460 C1060,410 820,390 752,350"/>
+  <text class="lab" x="900" y="424">read</text>
+</svg>
+    </div>
+    <figcaption>Counts come from the committed service manifests and the farm settings in the repository; machine names, addresses and accounts are left out. Everything coordinates through the database primary: the farm pulls work from a queue there, the managers move bugs there, and the event bus runs beside it. The compute cluster is kept for pure number work; the test farm runs on its own queue because a test pass needs git, subprocesses and network access.</figcaption>
+  </figure>
+</section>
+
+<section aria-labelledby="h-roles">
+  <div class="prose">
+    <p class="eyebrow">The ten named roles</p>
+    <h2 id="h-roles">One decision each, no shared knobs</h2>
+    <p>Each manager is a small service over a pure library with its own command line and tests, and an LLM for the judgment calls. A new responsibility goes to the role whose authority covers it, or it needs a new role.</p>
+  </div>
+  <div class="facts" role="list">
+    <div class="fact" role="listitem"><strong>Project Manager</strong><span>What work to do: the next step for every open bug, and how many agents run at once.</span></div>
+    <div class="fact" role="listitem"><strong>Release Manager</strong><span>What ships: GO or HOLD on accepted work, then the deploy and service restarts.</span></div>
+    <div class="fact" role="listitem"><strong>Test Manager</strong><span>What is adequately tested: confidence per build, suite audits. Never skips a test.</span></div>
+    <div class="fact" role="listitem"><strong>Chief of Staff</strong><span>What the operator sees: disposes of routine requests, escalates by exception, keeps a same-day veto window.</span></div>
+    <div class="fact" role="listitem"><strong>Infrastructure Manager</strong><span>What runs: the fleet matches its manifests and stays up. Never merges or deploys.</span></div>
+    <div class="fact" role="listitem"><strong>Risk Manager</strong><span>What size we trade: only through registered sizing switches, inside the operator's bounds.</span></div>
+    <div class="fact" role="listitem"><strong>Public Relations Manager</strong><span>What clients hear: the client communication schedule.</span></div>
+    <div class="fact" role="listitem"><strong>Expense Manager</strong><span>What we spend: AI, data and infrastructure costs shown beside trading earnings on one chart.</span></div>
+    <div class="fact" role="listitem"><strong>Tax Manager</strong><span>What we owe and when: realized gains and quarterly estimates, net of deductible costs.</span></div>
+    <div class="fact" role="listitem"><strong>Compliance and Security Manager</strong><span>What we may do and who holds the keys: terms, licences, key and token expiry. Tracks and reminds only.</span></div>
+  </div>
+</section>
+
+<footer class="prose">
+  <p>Every fact on this page is taken from the project's own design notes and source code. Numbers that the sources do not state are left out. Drawn by hand as inline SVG.</p>
+</footer>
+
+</main>
+</body>
+</html>

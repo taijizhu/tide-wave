@@ -107,3 +107,7 @@ and the design, and I review every change. The agents write and test the code.
 This is a personal learning project, shared to show what one person can build with AI. It is **not financial
 advice**, it makes no claim about performance, and **no trading code is included in this repository**. Account
 details, sizes and money amounts are hidden in the screenshots and the video.
+
+## Foundry: how it is built
+
+The engineering framework behind this tool - the bug database, AI builder agents, the Crucible check-in farm and the machine farm - is drawn here: **[Foundry design](https://taijizhu.github.io/tide-wave-practice/foundry/)**.

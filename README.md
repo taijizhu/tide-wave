@@ -8,7 +8,7 @@ It is for practice only. A practice session replays history, places no orders an
 > **Not financial advice.** This repository holds only this introduction, a few screenshots and a short video.
 > There is no trading code here, and nothing shown is a recommendation to buy or sell anything.
 
-![Video: a practice on a past day](video.mp4)
+**[Watch the video](https://taijizhu.github.io/tide-wave-practice/)** (plays in the browser)
 
 The video (a little over two minutes, with an AI voice) has captions burned in, and they are also in
 [`captions.srt`](captions.srt).

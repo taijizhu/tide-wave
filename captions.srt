@@ -1,0 +1,80 @@
+1
+00:00:03,850 --> 00:00:10,909
+This is Tide Wave, a personal project: a practice tool for intraday trading that I built with AI, mostly with Claude.
+
+2
+00:00:11,810 --> 00:00:17,429
+It replays a past trading day minute by minute, so I can practise decisions with no money at risk.
+
+3
+00:00:18,330 --> 00:00:22,394
+A practice never reaches a broker. Nothing here is financial advice.
+
+4
+00:00:23,290 --> 00:00:27,771
+Rehearse lists past days whose last five sessions look most like the coming session.
+
+5
+00:00:28,670 --> 00:00:35,381
+Pick a day opens the list of training days. For this demo, I use July 27, 2021.
+
+6
+00:00:36,280 --> 00:00:40,878
+The chart stays covered until I press Start, so I cannot peek at how the day ends.
+
+7
+00:00:41,780 --> 00:00:44,311
+I choose Training mode and press Start practice.
+
+8
+00:00:45,210 --> 00:00:48,461
+Now the day replays from the open, one minute at a time.
+
+9
+00:00:49,360 --> 00:00:54,167
+When one of the system's strategies wants to trade, an ask appears on the card at the right.
+
+10
+00:00:55,070 --> 00:01:02,500
+Each row is a reading at that minute: the entry turn, the central line, the trend walk, the two-year bond, and option flow.
+
+11
+00:01:03,400 --> 00:01:09,530
+On the live card, a small bot face also gives the practice agent's opinion. It never answers for me.
+
+12
+00:01:10,430 --> 00:01:14,795
+I answer YES to take the trade, or NO to skip it. Here I say yes.
+
+13
+00:01:15,700 --> 00:01:21,505
+A few minutes later, the strategy asks to exit. I approve, and the practice position is sold.
+
+14
+00:01:22,410 --> 00:01:28,447
+The boundary button joins the recent highs and lows into trend lines, as they form, with no hindsight.
+
+15
+00:01:29,350 --> 00:01:35,225
+Drawing tools, a trend line, ray, level and channel, let me mark my own view on the chart.
+
+16
+00:01:36,120 --> 00:01:41,321
+Fast forward skips ahead. Every minute is still replayed, and it stops at the next ask.
+
+17
+00:01:42,220 --> 00:01:44,774
+This time I say no, and skip the entry.
+
+18
+00:01:45,670 --> 00:01:51,382
+At the end, the day is scored: my calls beside the machine's, and whether each trade won or lost.
+
+19
+00:01:52,280 --> 00:01:57,435
+The point is practice: to watch a day unfold, and compare my judgment with the system's.
+
+20
+00:01:58,330 --> 00:02:04,901
+Thanks for watching. This is a personal learning project, not financial advice, and no trading code is shared.
+

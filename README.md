@@ -111,3 +111,7 @@ details, sizes and money amounts are hidden in the screenshots and the video.
 ## Foundry: how it is built
 
 The engineering framework behind this tool - the bug database, AI builder agents, the Crucible check-in farm and the machine farm - is drawn here: **[Foundry design](https://taijizhu.github.io/tide-wave-practice/foundry/)**.
+
+## Strategy backtest record
+
+Each Trade Assistant strategy's historic backtest replay record, month by month in IWM points, with the dataset as CSV/JSON: **[Backtest record](https://taijizhu.github.io/tide-wave-practice/backtests/)**. Backtest replays, not live trading; not financial advice.

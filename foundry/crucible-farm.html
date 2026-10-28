@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crucible: the machine farm and its distributed tasks</title>
+<style>
+  body { font: 16px/1.55 -apple-system, "Segoe UI", sans-serif; max-width: 1060px; margin: 0 auto; padding: 24px 20px 60px; color: #1d1d1f; background: #fdfdfb; }
+  h1 { font-size: 26px; margin: 6px 0 4px; }
+  .sub { color: #555; margin: 0 0 22px; }
+  figure { margin: 18px 0 34px; }
+  svg { width: 100%; height: auto; color: #1d1d1f; }
+  figcaption { font-size: 14px; color: #555; margin-top: 8px; }
+  .box { fill: #f3f5f8; stroke: currentColor; stroke-width: 1.2; }
+  .farm { fill: #eaf0f7; stroke: currentColor; stroke-width: 1.2; }
+  .t { font-size: 13px; fill: currentColor; }
+  .tb { font-size: 14px; font-weight: 600; fill: currentColor; }
+  .ts { font-size: 11.5px; fill: currentColor; opacity: .8; }
+  .lbl { font-size: 11.5px; fill: currentColor; }
+  .ln { stroke: currentColor; stroke-width: 1.4; fill: none; }
+  .pass { stroke: #2f8f4e; stroke-width: 2; fill: none; }
+  .rej { stroke: #c0392b; stroke-width: 2; fill: none; stroke-dasharray: 6 4; }
+  .passT { fill: #2f8f4e; font-size: 12px; font-weight: 600; }
+  .rejT { fill: #c0392b; font-size: 12px; font-weight: 600; }
+  .blk { fill: #9db7d6; stroke: currentColor; stroke-width: .8; }
+  .tick { fill: #2f8f4e; }
+  table { border-collapse: collapse; font-size: 14.5px; margin-top: 6px; }
+  td, th { padding: 6px 12px; border-bottom: 1px solid #e2e2dc; text-align: left; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #17181a; color: #e6e6e3; } svg { color: #e6e6e3; }
+    .box { fill: #23262b; } .farm { fill: #1f2a37; } .blk { fill: #3d5a80; }
+    .sub, figcaption { color: #aaa; } td, th { border-color: #33363b; }
+    .pass { stroke: #5cc27e; } .passT, .tick { fill: #5cc27e; } .rej { stroke: #e2695c; } .rejT { fill: #e2695c; }
+  }
+</style>
+</head>
+<body>
+<h1>Crucible: the machine farm and its distributed tasks</h1>
+<p class="sub"><a href="architecture.html">&larr; Foundry architecture</a> &middot; Yuchao Cao &middot; October 2026<br>How a change gets from a coding agent to the protected master: tested in parallel on a farm of machines, merged one at a time.</p>
+
+<figure>
+<svg viewBox="0 0 1000 540" role="img" aria-label="Agents submit branches to a shared queue; four farm machines each atomically claim one candidate, rebase it on master and run the full suite; passing candidates go to a single serialized integrator that fast-forward merges into master; failures reopen the bug with the failing tests.">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f8f4e"/></marker>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker>
+  </defs>
+
+  <!-- Bug database -->
+  <rect class="box" x="20" y="205" width="120" height="76" rx="8"/>
+  <text class="tb" x="80" y="236" text-anchor="middle">Bug database</text>
+  <text class="ts" x="80" y="255" text-anchor="middle">one bug = one step</text>
+  <text class="ts" x="80" y="270" text-anchor="middle">PM dispatches</text>
+
+  <!-- Agents -->
+  <rect class="box" x="185" y="125" width="140" height="56" rx="8"/>
+  <text class="tb" x="255" y="149" text-anchor="middle">Agent A</text>
+  <text class="ts" x="255" y="166" text-anchor="middle">own git worktree</text>
+  <rect class="box" x="185" y="215" width="140" height="56" rx="8"/>
+  <text class="tb" x="255" y="239" text-anchor="middle">Agent B</text>
+  <text class="ts" x="255" y="256" text-anchor="middle">own git worktree</text>
+  <rect class="box" x="185" y="305" width="140" height="56" rx="8"/>
+  <text class="tb" x="255" y="329" text-anchor="middle">Agent C</text>
+  <text class="ts" x="255" y="346" text-anchor="middle">own git worktree</text>
+
+  <path class="ln" d="M140,232 L183,155" marker-end="url(#a)"/>
+  <path class="ln" d="M140,243 L183,243" marker-end="url(#a)"/>
+  <path class="ln" d="M140,254 L183,331" marker-end="url(#a)"/>
+  <text class="lbl" x="80" y="196" text-anchor="middle">dispatch</text>
+
+  <!-- Queue -->
+  <rect class="box" x="385" y="150" width="120" height="190" rx="8"/>
+  <text class="tb" x="445" y="176" text-anchor="middle">Check-in queue</text>
+  <rect class="blk" x="405" y="190" width="80" height="22" rx="3"/>
+  <rect class="blk" x="405" y="218" width="80" height="22" rx="3"/>
+  <rect class="blk" x="405" y="246" width="80" height="22" rx="3"/>
+  <rect class="blk" x="405" y="274" width="80" height="22" rx="3"/>
+  <text class="ts" x="445" y="320" text-anchor="middle">candidates waiting</text>
+
+  <path class="ln" d="M325,153 L383,200" marker-end="url(#a)"/>
+  <path class="ln" d="M325,243 L383,243" marker-end="url(#a)"/>
+  <path class="ln" d="M325,333 L383,288" marker-end="url(#a)"/>
+  <text class="lbl" x="330" y="120">submit branch,</text>
+  <text class="lbl" x="330" y="134">move to next bug</text>
+
+  <!-- Farm -->
+  <text class="tb" x="665" y="28" text-anchor="middle">Farm: 4 machines, each pulls its own work</text>
+  <g>
+    <rect class="farm" x="565" y="42" width="200" height="92" rx="8"/>
+    <text class="tb" x="580" y="64">testbox006</text>
+    <text class="ts" x="580" y="84">1 rebase onto current master</text>
+    <text class="ts" x="580" y="101">2 static gates, then 28,000+ tests</text>
+    <text class="ts" x="580" y="118">3 every test inside its time budget</text>
+  </g>
+  <g>
+    <rect class="farm" x="565" y="152" width="200" height="92" rx="8"/>
+    <text class="tb" x="580" y="174">testbox007</text>
+    <text class="ts" x="580" y="194">1 rebase onto current master</text>
+    <text class="ts" x="580" y="211">2 static gates, then 28,000+ tests</text>
+    <text class="ts" x="580" y="228">3 every test inside its time budget</text>
+  </g>
+  <g>
+    <rect class="farm" x="565" y="262" width="200" height="92" rx="8"/>
+    <text class="tb" x="580" y="284">testbox009</text>
+    <text class="ts" x="580" y="304">1 rebase onto current master</text>
+    <text class="ts" x="580" y="321">2 static gates, then 28,000+ tests</text>
+    <text class="ts" x="580" y="338">3 every test inside its time budget</text>
+  </g>
+  <g>
+    <rect class="farm" x="565" y="372" width="200" height="92" rx="8"/>
+    <text class="tb" x="580" y="394">testbox010</text>
+    <text class="ts" x="580" y="414">1 rebase onto current master</text>
+    <text class="ts" x="580" y="431">2 static gates, then 28,000+ tests</text>
+    <text class="ts" x="580" y="448">3 every test inside its time budget</text>
+  </g>
+
+  <path class="ln" d="M505,190 L563,88" marker-end="url(#a)"/>
+  <path class="ln" d="M505,225 L563,198" marker-end="url(#a)"/>
+  <path class="ln" d="M505,262 L563,308" marker-end="url(#a)"/>
+  <path class="ln" d="M505,300 L563,418" marker-end="url(#a)"/>
+  <text class="lbl" x="445" y="362" text-anchor="middle">atomic claim:</text>
+  <text class="lbl" x="445" y="376" text-anchor="middle">one candidate</text>
+  <text class="lbl" x="445" y="390" text-anchor="middle">per machine</text>
+
+  <!-- Integrator and master -->
+  <rect class="box" x="835" y="150" width="145" height="76" rx="8"/>
+  <text class="tb" x="907" y="178" text-anchor="middle">Integrator</text>
+  <text class="ts" x="907" y="196" text-anchor="middle">single, serialized:</text>
+  <text class="ts" x="907" y="212" text-anchor="middle">one merge at a time</text>
+
+  <rect class="box" x="835" y="290" width="145" height="62" rx="8" stroke-width="2.4"/>
+  <text class="tb" x="907" y="316" text-anchor="middle">Protected master</text>
+  <text class="ts" x="907" y="336" text-anchor="middle">no direct pushes</text>
+  <path class="ln" d="M907,226 L907,288" marker-end="url(#a)"/>
+  <text class="lbl" x="915" y="262">fast-forward</text>
+  <text class="lbl" x="915" y="276">merge</text>
+
+  <path class="pass" d="M765,88 L833,170" marker-end="url(#ag)"/>
+  <path class="pass" d="M765,198 L833,185" marker-end="url(#ag)"/>
+  <path class="pass" d="M765,308 L833,205" marker-end="url(#ag)"/>
+  <path class="pass" d="M765,418 L833,215" marker-end="url(#ag)"/>
+  <text class="passT" x="775" y="66">pass</text>
+
+  <!-- Reject loop -->
+  <path class="rej" d="M665,464 L665,505 L80,505 L80,283" marker-end="url(#ar)"/>
+  <text class="rejT" x="372" y="497" text-anchor="middle">fail, conflict or too slow: master untouched, bug reopens with the failing tests</text>
+  <path class="ln" d="M907,352 L907,525 L60,525 L60,283" marker-end="url(#a)" stroke-dasharray="2 3"/>
+  <text class="lbl" x="560" y="538" text-anchor="middle">merged: bug resolved, the next dependent step is unblocked</text>
+</svg>
+<figcaption>Testing is distributed; merging is not. Each farm machine runs a small service that claims one candidate at a time from the shared queue, so there is no central dispatcher. A machine that reboots simply resumes, and adding a machine adds throughput. Only the integrator writes to master, so two passing changes can never merge on top of each other untested.</figcaption>
+</figure>
+
+<figure>
+<svg viewBox="0 0 1000 250" role="img" aria-label="Eight check-ins take eight slots on one machine but two slots on four machines; merges stay one at a time.">
+  <text class="tb" x="20" y="24">Why a farm: the same 8 check-ins, one machine against four</text>
+
+  <text class="t" x="20" y="62">1 machine</text>
+  <g>
+    <rect class="blk" x="130" y="46" width="104" height="24" rx="3"/><rect class="blk" x="236" y="46" width="104" height="24" rx="3"/>
+    <rect class="blk" x="342" y="46" width="104" height="24" rx="3"/><rect class="blk" x="448" y="46" width="104" height="24" rx="3"/>
+    <rect class="blk" x="554" y="46" width="104" height="24" rx="3"/><rect class="blk" x="660" y="46" width="104" height="24" rx="3"/>
+    <rect class="blk" x="766" y="46" width="104" height="24" rx="3"/><rect class="blk" x="872" y="46" width="104" height="24" rx="3"/>
+  </g>
+
+  <text class="t" x="20" y="112">testbox006</text>
+  <rect class="blk" x="130" y="96" width="104" height="24" rx="3"/><rect class="blk" x="236" y="96" width="104" height="24" rx="3"/>
+  <text class="t" x="20" y="140">testbox007</text>
+  <rect class="blk" x="140" y="124" width="104" height="24" rx="3"/><rect class="blk" x="246" y="124" width="104" height="24" rx="3"/>
+  <text class="t" x="20" y="168">testbox009</text>
+  <rect class="blk" x="150" y="152" width="104" height="24" rx="3"/><rect class="blk" x="256" y="152" width="104" height="24" rx="3"/>
+  <text class="t" x="20" y="196">testbox010</text>
+  <rect class="blk" x="160" y="180" width="104" height="24" rx="3"/><rect class="blk" x="266" y="180" width="104" height="24" rx="3"/>
+
+  <text class="t" x="20" y="232">integrator</text>
+  <rect class="tick" x="234" y="218" width="6" height="18"/><rect class="tick" x="244" y="218" width="6" height="18"/>
+  <rect class="tick" x="254" y="218" width="6" height="18"/><rect class="tick" x="264" y="218" width="6" height="18"/>
+  <rect class="tick" x="340" y="218" width="6" height="18"/><rect class="tick" x="350" y="218" width="6" height="18"/>
+  <rect class="tick" x="360" y="218" width="6" height="18"/><rect class="tick" x="370" y="218" width="6" height="18"/>
+
+  <line class="ln" x1="390" y1="96" x2="390" y2="236" stroke-dasharray="3 3"/>
+  <text class="t" x="400" y="140">farm done here: about 1/4 of the time</text>
+  <text class="ts" x="400" y="158">each block is one full-suite run (median about 13.5 minutes)</text>
+  <text class="ts" x="400" y="176">green ticks: merges, still one at a time</text>
+</svg>
+<figcaption>Each full-suite run takes about 13.5 minutes at the median. Four machines finish four of them in the time one machine finishes one. Merges are seconds long, so serializing them costs almost nothing.</figcaption>
+</figure>
+
+<table>
+  <tr><th>Measured (Crucible records, 2026)</th><th></th></tr>
+  <tr><td>Full-suite runs in one week</td><td>743, on 4 machines</td></tr>
+  <tr><td>Run time</td><td>median 809 s, mean 946 s</td></tr>
+  <tr><td>Machine time that week</td><td>about 195 hours, about 8 days of serial testing</td></tr>
+  <tr><td>Check-ins since July 2026</td><td>9,400+: 5,600 merged, 2,800 stopped before master</td></tr>
+</table>
+</body>
+</html>

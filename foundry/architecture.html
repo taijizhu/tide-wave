@@ -69,6 +69,7 @@
   <li>A pass goes to a single, serialized integrator that fast-forward merges it into the protected master. Testing runs in parallel; merging happens one candidate at a time.</li>
 </ol>
 <p>There is no central dispatcher. Each machine runs a small service that pulls from the queue, so a machine that reboots simply resumes. I chose this design after many agents running the suite on one machine kept colliding and producing flaky results.</p>
+<p>Diagram and measured numbers: <a href="crucible-farm.html">Crucible: the machine farm and its distributed tasks</a>.</p>
 
 <h3>5. Shipping: switches, evidence, and a human in the loop</h3>
 <p>Every feature ships behind a live switch that can be flipped without a deploy. A trading change ships on only after a recorded before-and-after study on real recent days, judged against fixed release criteria. The machine proposes trade entries and keeps the record; a person approves entries and owns exits. Safety checks stay mechanical, never left to a model's judgment.</p>

@@ -124,7 +124,10 @@ The full design, with the bug lifecycle, a check-in's path through Crucible and 
 
 How it came about - the architecture, where it comes from in my Microsoft years, and what AI changed:
 **[Foundry: the architecture of a software company run by AI agents](https://taijizhu.github.io/tide-wave/foundry/architecture.html)**.
-(also published [on LinkedIn](https://www.linkedin.com/pulse/foundry-architecture-software-company-run-ai-agents-yuchao-cao-pn5wc/)).
+How Crucible spreads testing across the farm while merging one change at a time, with measured numbers:
+**[Crucible: the machine farm and its distributed tasks](https://taijizhu.github.io/tide-wave/foundry/crucible-farm.html)**.
+
+(The architecture write-up is also published [on LinkedIn](https://www.linkedin.com/pulse/foundry-architecture-software-company-run-ai-agents-yuchao-cao-pn5wc/)).
 
 ## 4. Trading strategies
 

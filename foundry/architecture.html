@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foundry: the architecture of a software company run by AI agents</title>
+<style>
+  body { font: 17px/1.6 Georgia, "Iowan Old Style", serif; max-width: 740px; margin: 0 auto; padding: 24px 20px 72px; color: #1f1f1f; background: #fdfdfb; }
+  h1 { font: 700 30px/1.25 -apple-system, "Segoe UI", sans-serif; margin: 12px 0 6px; }
+  h2 { font: 700 21px/1.3 -apple-system, "Segoe UI", sans-serif; margin: 38px 0 10px; }
+  h3 { font: 600 17px/1.3 -apple-system, "Segoe UI", sans-serif; margin: 22px 0 6px; }
+  .by { color: #666; font: 15px -apple-system, "Segoe UI", sans-serif; margin-bottom: 26px; }
+  table { border-collapse: collapse; width: 100%; font: 15px/1.45 -apple-system, "Segoe UI", sans-serif; margin: 10px 0; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid #e2e2dc; }
+  th { background: #f1f1ec; }
+  .flow { font: 15px/1.45 -apple-system, "Segoe UI", sans-serif; counter-reset: s; list-style: none; padding: 0; }
+  .flow li { position: relative; padding: 8px 12px 8px 44px; margin: 6px 0; background: #f3f5f8; border-radius: 6px; }
+  .flow li::before { counter-increment: s; content: counter(s); position: absolute; left: 12px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #2c4a6e; color: #fff; text-align: center; font-size: 13px; line-height: 22px; }
+  .nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-family: -apple-system, "Segoe UI", sans-serif; }
+  .nums div { background: #f3f5f8; border-radius: 6px; padding: 10px 12px; }
+  .nums b { display: block; font-size: 22px; color: #2c4a6e; }
+  .nums span { font-size: 14px; color: #444; }
+  .note { font: 14px/1.5 -apple-system, "Segoe UI", sans-serif; color: #666; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #17181a; color: #e6e6e3; } th { background: #24262a; } th, td { border-color: #33363b; }
+    .flow li, .nums div { background: #22262c; } .nums b { color: #8fb4e3; } .nums span, .by, .note { color: #aaa; }
+  }
+  a { color: #2c5d9a; }
+  @media (prefers-color-scheme: dark) { a { color: #8fb4e3; } }
+</style>
+</head>
+<body>
+<h1>Foundry: the architecture of a software company run by AI agents</h1>
+<div class="by">Yuchao Cao · October 2026 · <a href="https://www.linkedin.com/in/yuchao-cao-11a5097/">LinkedIn</a> · <a href="https://github.com/taijizhu/tide-wave">GitHub</a></div>
+
+<p><b>With AI as the workforce, one person with the right architecture and enough experience can build a system that used to take a team.</b> That is what this project showed me.</p>
+
+<p>Foundry is the engineering system I designed to build and run Tide Wave, an intraday trading assistant. Claude agents write the code. My part is the architecture: how work is specified, handed out, tested, merged, released and watched. Most of it comes from what I learned in twelve years at Microsoft leading test and engineering teams. The tools are new; the discipline is the same. The agents supplied the typing speed, and the experience supplied the structure that makes their output trustworthy.</p>
+
+<p>This note describes that architecture. It contains no trading logic.</p>
+
+<h2>From Microsoft practice to agent scaffolding</h2>
+<table>
+  <tr><th>What I did at Microsoft</th><th>What it became in Foundry</th></tr>
+  <tr><td>A build verification tool so each developer could test on their own box before submitting</td><td><b>Crucible</b>, a gated check-in farm: no change reaches master without passing the full suite on a clean machine</td></tr>
+  <tr><td>Stress tests on idle dev boxes, with a daily stress score</td><td>Idle machines pull work from a shared queue; dashboards show the system's rhythm, so a part that has gone quiet stands out</td></tr>
+  <tr><td>Model-based testing</td><td>Minute-by-minute replay of stored market days; every real incident is pinned as a regression case that must fail before the fix and pass after it</td></tr>
+  <tr><td>Find bugs as early as possible</td><td>The <b>bug database is the centre</b> of the system; every finding from every source becomes a tracked bug with its origin recorded</td></tr>
+  <tr><td>Building and running a team: hiring, roles, test plans</td><td>Ten AI manager roles with separate authority, written specs as the contract, and capacity treated as headcount</td></tr>
+</table>
+
+<h2>The parts</h2>
+
+<h3>1. The bug database and its lifecycle</h3>
+<p>Every unit of work is a bug: a defect, a feature step, a study. A bug moves through a guarded state machine (open, claimed, in Crucible, resolved, reviewing, closed), and every transition is written to an audit trail and published as an event. Agents subscribe to events instead of polling. One bug is one step. Bigger work is split into steps linked by dependencies, so each agent gets a task it can finish and verify.</p>
+
+<h3>2. The Project Manager and the workforce</h3>
+<p>A Project Manager agent reads the open bugs, decides what to do next and dispatches a coding agent into its own isolated git worktree. The workforce is outsourced AI from more than one vendor (Claude, MiniMax). A lesson I learned the hard way: <b>the quality of the spec decides who can do the work</b>. An agent builds from what the bug said when it started and shares none of the context the author had. A quality gate rejects a bug that is not specific, measurable and testable before any agent picks it up.</p>
+
+<h3>3. Ten roles, non-overlapping authority</h3>
+<p>Each decision has one owner: the Project Manager decides what work to do, the Release Manager what ships, the Test Manager what is adequately tested, and the Risk Manager what size the system trades, within limits I set. Further roles cover what the operator sees, client communication, infrastructure, expenses, tax, and compliance and security. Keeping authority separate is what stops agents from overruling one another.</p>
+
+<h3>4. Crucible: the gated check-in farm</h3>
+<ol class="flow">
+  <li>An agent finishes a fix on a feature branch and submits it. It does not wait; it moves on to its next task.</li>
+  <li>An idle farm machine claims the candidate from a shared queue. The claim is atomic, so each machine tests one candidate at a time in its own checkout.</li>
+  <li>The machine rebases the candidate onto the current master and runs the full test suite, with static gates first.</li>
+  <li>A failure, a rebase conflict, or a test slower than its time budget rejects the candidate. The bug reopens with the failing tests attached. Master is untouched.</li>
+  <li>A pass goes to a single, serialized integrator that fast-forward merges it into the protected master. Testing runs in parallel; merging happens one candidate at a time.</li>
+</ol>
+<p>There is no central dispatcher. Each machine runs a small service that pulls from the queue, so a machine that reboots simply resumes. I chose this design after many agents running the suite on one machine kept colliding and producing flaky results.</p>
+
+<h3>5. Shipping: switches, evidence, and a human in the loop</h3>
+<p>Every feature ships behind a live switch that can be flipped without a deploy. A trading change ships on only after a recorded before-and-after study on real recent days, judged against fixed release criteria. The machine proposes trade entries and keeps the record; a person approves entries and owns exits. Safety checks stay mechanical, never left to a model's judgment.</p>
+
+<h3>6. Replay and simulation</h3>
+<p>Strategies are replayed minute by minute against stored market history on a Ray cluster. Each of the twelve strategies has its own regression gate. Every run is stamped with its code version and parameters, so a result can be traced to the exact code that produced it.</p>
+
+<h2>Scale (December 2025 to October 2026)</h2>
+<div class="nums">
+  <div><b>~15,000</b><span>commits, ~6,500 in the last 30 days</span></div>
+  <div><b>28,000+</b><span>automated tests, run by Crucible on every change</span></div>
+  <div><b>9,400+</b><span>Crucible check-ins since July 2026: 5,600 merged, 2,800 stopped before master</span></div>
+  <div><b>743</b><span>full-suite runs in one week on 4 machines in parallel, about 8 days of serial testing</span></div>
+  <div><b>~18,000</b><span>bugs tracked; ~4,900 resolved with a deployed fix</span></div>
+  <div><b>12</b><span>trading strategies, each with its own regression gate</span></div>
+</div>
+
+<h2>What I learned</h2>
+<ul>
+  <li><b>Verification is the bottleneck, not code generation.</b> Agents write code fast. The scarce resource is proving it is right, so most of the architecture is about testing and evidence.</li>
+  <li><b>Never take an agent's claim on trust.</b> Every "done" or "running" is checked against the record before anyone relies on it.</li>
+  <li><b>An empty model reply is a dead call, not an answer.</b> It is detected and retried, never scored.</li>
+  <li><b>Flaky tests almost always mean unmocked live I/O.</b> The farm rejects slow tests for that reason, even when they pass.</li>
+  <li><b>The failure to watch for is absence.</b> A part of the system that silently stops is worse than one that fails loudly, so the instruments are built to show what has gone quiet.</li>
+</ul>
+
+<h2>What it shows</h2>
+<p>I did not write Foundry's code by hand. I built it through architecture: I decided how the work flows, where the gates are, who owns which decision, and what counts as evidence, and then I directed AI agents to build inside that frame. The numbers above are the result of that design, not of typing. Without the experience, the agents would have produced a large amount of code that nobody could trust. With it, they produced a working system.</p>
+
+<h2>Why this matters for the work I want next</h2>
+<p>As a Forward Deployed or AI Platform engineer, the job is the same one I have been doing here: put reliable scaffolding around LLMs so a team can trust what they produce. That means clear specs, isolated work, gated testing, evidence before release, and a human where judgment matters.</p>
+
+<p class="note">More: the <a href="https://taijizhu.github.io/tide-wave/foundry/">Foundry design page</a> (diagrams of the bug lifecycle, a check-in's path through Crucible and the machine farm), the <a href="https://github.com/taijizhu/tide-wave">Tide Wave repository</a>, and my <a href="https://www.linkedin.com/in/yuchao-cao-11a5097/">LinkedIn profile</a>.</p>
+<p class="note">Figures are taken from the system's own records (git history, the Crucible queue and the bug database) on 28 October 2026.</p>
+</body>
+</html>

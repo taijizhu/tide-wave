@@ -122,6 +122,9 @@ release, test, risk, infrastructure and others - each decide one thing and hand 
 The full design, with the bug lifecycle, a check-in's path through Crucible and the machine farm by role:
 **[Foundry design](https://taijizhu.github.io/tide-wave/foundry/)**.
 
+How it came about - the architecture, where it comes from in my Microsoft years, and what AI changed:
+**[Foundry: the architecture of a software company run by AI agents](https://taijizhu.github.io/tide-wave/foundry/architecture.html)**.
+
 ## 4. Trading strategies
 
 The Trade Assistant runs several strategies, each looking for one kind of move in IWM (a return toward the

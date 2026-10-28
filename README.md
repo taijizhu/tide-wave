@@ -14,13 +14,13 @@ It has three parts:
 
 | Part | What it is | Where |
 |---|---|---|
-| **Practice playground** | Replay a past trading day minute by minute and answer the system's trade asks, then compare your calls with the machine's | [below](#2-practice-playground) · [video](https://taijizhu.github.io/tide-wave-practice/) |
-| **Foundry** | The engineering framework: a bug database at the centre, AI builder agents, a gated check-in farm, a machine farm | [below](#3-foundry) · [design page](https://taijizhu.github.io/tide-wave-practice/foundry/) |
-| **Trading strategies** | The Trade Assistant's strategies and their historic backtest replay record, refreshed as they improve | [below](#4-trading-strategies) · [backtest record](https://taijizhu.github.io/tide-wave-practice/backtests/) |
+| **Practice playground** | Replay a past trading day minute by minute and answer the system's trade asks, then compare your calls with the machine's | [below](#2-practice-playground) · [video](https://taijizhu.github.io/tide-wave/) |
+| **Foundry** | The engineering framework: a bug database at the centre, AI builder agents, a gated check-in farm, a machine farm | [below](#3-foundry) · [design page](https://taijizhu.github.io/tide-wave/foundry/) |
+| **Trading strategies** | The Trade Assistant's strategies and their historic backtest replay record, refreshed as they improve | [below](#4-trading-strategies) · [backtest record](https://taijizhu.github.io/tide-wave/backtests/) |
 
 ## 2. Practice playground
 
-**[Watch the video](https://taijizhu.github.io/tide-wave-practice/)** (about two minutes, plays in the browser;
+**[Watch the video](https://taijizhu.github.io/tide-wave/)** (about two minutes, plays in the browser;
 captions also in [`captions.srt`](captions.srt)).
 
 It is for practice only. A practice session replays history, places no orders and never talks to a broker.
@@ -120,7 +120,7 @@ release, test, risk, infrastructure and others - each decide one thing and hand 
 ![Foundry: the whole system](foundry/fig1_system.png)
 
 The full design, with the bug lifecycle, a check-in's path through Crucible and the machine farm by role:
-**[Foundry design](https://taijizhu.github.io/tide-wave-practice/foundry/)**.
+**[Foundry design](https://taijizhu.github.io/tide-wave/foundry/)**.
 
 ## 4. Trading strategies
 
@@ -131,7 +131,7 @@ losing trades first, the biggest winners, its gap months and the code versions i
 record is also downloadable as CSV/JSON, and it is regenerated from the stored replays as the strategies
 improve.
 
-**[Strategy backtest record](https://taijizhu.github.io/tide-wave-practice/backtests/)**
+**[Strategy backtest record](https://taijizhu.github.io/tide-wave/backtests/)**
 
 These are backtest replays on historical data - not live trading results, before costs, and not a promise of
 future results.

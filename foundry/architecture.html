@@ -77,15 +77,20 @@
 <h3>6. Replay and simulation</h3>
 <p>Strategies are replayed minute by minute against stored market history on a Ray cluster. Each of the twelve strategies has its own regression gate. Every run is stamped with its code version and parameters, so a result can be traced to the exact code that produced it.</p>
 
-<h2>Scale (December 2025 to October 2026)</h2>
+<h2>From hand-coded to AI-coded</h2>
+<p>The project did not start with AI. I wrote the first trading bots by hand in March 2020, and for almost six years every commit was mine. The first AI-written commits appear in August 2025; from January 2026 the agents took over most of the writing, and by October 2026 they made more than 80% of the commits. The git history records the shift:</p>
+<p><img src="commits_by_year.png" alt="Commits per year: hand-coded 2020 to 2025, AI agents from 2026" style="width:100%;height:auto;border:1px solid #e2e2dc;border-radius:6px"></p>
+
+<h2>Scale (measured November 4, 2026, and still growing)</h2>
 <div class="nums">
-  <div><b>~15,000</b><span>commits, ~6,500 in the last 30 days</span></div>
-  <div><b>28,000+</b><span>automated tests, run by Crucible on every change</span></div>
-  <div><b>9,400+</b><span>Crucible check-ins since July 2026: 5,600 merged, 2,800 stopped before master</span></div>
+  <div><b>33,156</b><span>commits since March 8, 2020; 12,601 by AI agents in 2026</span></div>
+  <div><b>40,480</b><span>automated tests, run by Crucible on every change</span></div>
+  <div><b>9,959</b><span>Crucible check-ins since July 10, 2026: 5,932 merged, 3,790 stopped before master</span></div>
   <div><b>743</b><span>full-suite runs in one week on 4 machines in parallel, about 8 days of serial testing</span></div>
-  <div><b>~18,000</b><span>bugs tracked; ~4,900 resolved with a deployed fix</span></div>
-  <div><b>12</b><span>trading strategies, each with its own regression gate</span></div>
+  <div><b>20,121</b><span>bugs tracked; 5,226 resolved with a deployed fix</span></div>
+  <div><b>12</b><span>Mac minis on one shelf run the farm; 12 trading strategies, each with its own regression gate</span></div>
 </div>
+<p><img src="machine_farm_photo.jpg" alt="The Foundry build farm: 12 Mac minis on one shelf" style="width:100%;height:auto;border-radius:6px;margin-top:14px"></p>
 
 <h2>What I learned</h2>
 <ul>

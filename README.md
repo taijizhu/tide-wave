@@ -4,6 +4,8 @@
 > page and a backtest record. There is no trading code here, and nothing shown is a recommendation to buy or
 > sell anything.
 
+**[Six years, every month](https://taijizhu.github.io/tide-wave/story.html)** - the story behind this project, from a college robot to AI agents writing the code.
+
 ## 1. Overview
 
 This is a personal project: one person running a small intraday options trading desk on IWM (the Russell 2000

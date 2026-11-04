@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Six Years, Every Month</title>
+<meta name="description" content="Yuchao Cao: from a college robot-soccer entry to a one-person trading company whose code is now written by AI agents.">
+<style>
+  :root { --ink: #1f1f1f; --muted: #666; --bg: #fdfdfb; --rule: #e2e2dc; --accent: #2c4a6e; --card: #f3f5f8; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ink: #e6e6e3; --muted: #aaa; --bg: #17181a; --rule: #33363b; --accent: #8fb4e3; --card: #22262c; } }
+  :root[data-theme="dark"] { --ink: #e6e6e3; --muted: #aaa; --bg: #17181a; --rule: #33363b; --accent: #8fb4e3; --card: #22262c; }
+  body { font: 17px/1.65 Georgia, "Iowan Old Style", serif; max-width: 740px; margin: 0 auto; padding: 24px 16px 72px; color: var(--ink); background: var(--bg); }
+  h1 { font: 700 32px/1.2 -apple-system, "Segoe UI", sans-serif; margin: 12px 0 6px; }
+  h2 { font: 700 20px/1.3 -apple-system, "Segoe UI", sans-serif; margin: 40px 0 8px; }
+  .years { font: 600 13px -apple-system, "Segoe UI", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-top: 40px; }
+  .years + h2 { margin-top: 2px; }
+  .by { color: var(--muted); font: 15px -apple-system, "Segoe UI", sans-serif; margin-bottom: 26px; }
+  img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--rule); }
+  figure { margin: 18px 0; } figcaption { font: 14px/1.5 -apple-system, "Segoe UI", sans-serif; color: var(--muted); margin-top: 6px; }
+  .nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; font-family: -apple-system, "Segoe UI", sans-serif; margin: 14px 0; }
+  .nums div { background: var(--card); border-radius: 6px; padding: 10px 12px; }
+  .nums b { display: block; font-size: 22px; color: var(--accent); } .nums span { font-size: 14px; color: var(--muted); }
+  .note { font: 14px/1.5 -apple-system, "Segoe UI", sans-serif; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<h1>Six years, every month</h1>
+<div class="by">Yuchao Cao · Warwick, Rhode Island · November 2026 · <a href="https://www.linkedin.com/in/yuchao-cao-11a5097/">LinkedIn</a> · <a href="https://github.com/taijizhu/tide-wave">GitHub</a></div>
+
+<p>This is the story of one long project and the career that led to it. The dates and numbers come from my resume and from the project's own git history, measured on November 4, 2026.</p>
+
+<p class="years">1995 – 1998 · Cleveland</p>
+<h2>A robot that found the goal on its own</h2>
+<p>At Case Western Reserve University I installed fiber network cards in students' PCs for CWRUnet, the first all-fiber-optic campus network. For a robot-soccer competition I built a LEGO robot run by C code compiled for its on-board controller: it read its sensors to find the ball and the goal and steered the ball in by itself. I left in 1998 with an M.S. and a B.S. (cum laude) in Computer Engineering.</p>
+
+<p class="years">1997 – 2000 · Fort Collins, Bellevue</p>
+<h2>Compilers and test code</h2>
+<p>I wrote C test libraries that probed individual nodes on HP motherboards at Agilent, co-owned OrbWorks, where I developed a C compiler and runtime library that let hobbyists write their own software for Windows CE devices, and integrated CPU, compiler and linker settings into Visual Studio for Windows CE at bSquare.</p>
+
+<p class="years">2000 – 2012 · Redmond, Beijing</p>
+<h2>Twelve years at Microsoft: find the bug early</h2>
+<p>On Windows P2P I built a build-verification tool so every developer could test on their own machine before checking in, and stress automation that ran on idle machines and published a daily stress score. In Beijing, as a Principal Development Manager, I built the Search Technology Center test team and managed the Bing search testing and Cosmos storage tools teams. The rule I carried everywhere: code review, unit tests and build verification are the cheapest way to catch a bug, before it gets deeper into the system.</p>
+
+<p class="years">2013 – 2019 · Beijing</p>
+<h2>Family, a startup, and learning to trade</h2>
+<p>I spent four years as a full-time parent, and built an iOS greeting-card app end to end as a learning project. Then came a short spell at Amazon modelling seller behaviour, a year as CTO of a consumer-privacy startup, and from 2019 my own small company, where I started learning to trade.</p>
+
+<p class="years">March 2020</p>
+<h2>The first commit</h2>
+<p>On March 8, 2020 I made the first commit of rtrader, a trading bot I wrote by hand. I kept at it, slowly, through 2021, 2022 and 2023. In 2024 I built my own code generator that wrote Python automatically from historic trading scenarios, which is why that year has the most commits of the hand-coded era.</p>
+
+<p class="years">May 2024 – November 2025 · Los Angeles, Rhode Island</p>
+<h2>Leukemia, and the project kept going</h2>
+<p>In May 2024 I was treated for leukemia at City of Hope in Los Angeles, followed by a long recovery. I left the hospital in March 2025 and rested at home in Rhode Island until I was strong enough to work again. During recovery I taught myself modern AI engineering.</p>
+<p>The project never stopped. The git history has <b>2,689 commits in those 19 months, at least one in every single month</b>, including the months in hospital. Since the first commit in March 2020 there has not been one month without a commit: 81 months in a row.</p>
+
+<p class="years">December 2025 – today</p>
+<h2>The AI agents take over the typing</h2>
+<p>From December 2025, back home and working with Claude, the ideas I had been carrying finally took off. I stopped writing most of the code myself and started designing the system the code is written in: Foundry. A bug database sits at the centre; AI coding agents (Claude, MiniMax) each work in their own git worktree; Crucible, a gated check-in farm, runs the full test suite on every change before it can merge; and AI manager roles (project, release, test, infrastructure and others) pick the next work, decide what ships and keep the machines healthy. Every bug found becomes a pinned test, so the system improves with every iteration. It is the same discipline I learned at Microsoft, with agents in place of a team.</p>
+
+<figure>
+  <img src="foundry/commits_by_year.png" alt="Commits per year: hand-coded 2020 to 2025, AI agents from 2026">
+  <figcaption>Commits per year from the project's git history. Through 2025 every commit is mine; in 2026 AI agents made 12,601 of them, more than 80% by October.</figcaption>
+</figure>
+
+<div class="nums">
+  <div><b>33,156</b><span>commits since March 8, 2020, in all 81 months</span></div>
+  <div><b>40,480</b><span>automated tests run on every change</span></div>
+  <div><b>9,959</b><span>gated check-ins since July 10, 2026</span></div>
+  <div><b>3,790</b><span>bad changes stopped before master</span></div>
+  <div><b>20,121</b><span>bugs tracked; 5,226 fixed and shipped</span></div>
+  <div><b>12</b><span>Mac minis on one shelf run it all</span></div>
+</div>
+<p class="note">Measured November 4, 2026, and still growing every day.</p>
+
+<figure>
+  <img src="foundry/machine_farm_photo.jpg" alt="The Foundry build farm: 12 Mac minis on one wire shelf">
+  <figcaption>The machine farm at home: 12 Mac minis, a network switch and two battery backups.</figcaption>
+</figure>
+
+<h2>Still a work in progress</h2>
+<p>Handing the coding of a one-person trading company to AI agents is not finished. Each month the agents take on more, and my job moves further from typing code toward deciding what to build, setting the rules and reviewing the work. What I am looking for next is a role where that experience, building and testing systems with people and now with AI, solves real problems for a team.</p>
+
+<p class="note">More: <a href="foundry/">Foundry design</a> · <a href="foundry/architecture.html">the architecture write-up</a> · <a href="https://github.com/taijizhu/tide-wave">the GitHub repository</a>. This page contains no trading code and is not financial advice.</p>
+
+</body>
+</html>

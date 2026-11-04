@@ -134,7 +134,7 @@ records the whole shift:
 | 2021 | 1,358 | 0 |
 | 2022 | 3,486 | 0 |
 | 2023 | 3,077 | 0 |
-| 2024 | 5,334 | 0 |
+| 2024 | 5,334 (many written by my own code generator from historic trading scenarios) | 0 |
 | 2025 | 2,119 | 7 |
 | 2026 (to November 4) | 3,200 | 12,601 |
 

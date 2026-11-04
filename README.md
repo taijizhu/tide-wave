@@ -141,6 +141,7 @@ records the whole shift:
 † 2024 has extra commits from my own code generator, which wrote Python automatically from historic trading
 scenarios - an experiment before the AI agents, not AI-written code.
 
+It is still a work in progress: the AI agents are taking over the coding of a one-person trading company step by step.
 My role changed with it: from writing the code to designing the system, setting the rules and reviewing the
 agents' work - the same move I made at Microsoft from developer to engineering manager.
 

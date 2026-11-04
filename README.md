@@ -119,6 +119,28 @@ release, test, risk, infrastructure and others - each decide one thing and hand 
 
 ![Foundry: the whole system](foundry/fig1_system.png)
 
+### From hand-coded to AI-coded: the history in git
+
+The project did not start with AI. I wrote the first trading bots by hand in March 2020, and for almost six years
+every commit was mine. The first AI-written commits appear in August 2025; from January 2026 AI coding agents
+took over most of the writing, and by October 2026 they made more than 80% of the commits. The git history
+records the whole shift:
+
+![Commits per year: hand-coded 2020-2025, AI agents from 2026](foundry/commits_by_year.png)
+
+| Year | Commits under my name | Commits by AI agents |
+|---|---|---|
+| 2020 (from March 8) | 1,974 | 0 |
+| 2021 | 1,358 | 0 |
+| 2022 | 3,486 | 0 |
+| 2023 | 3,077 | 0 |
+| 2024 | 5,334 | 0 |
+| 2025 | 2,119 | 7 |
+| 2026 (to November 4) | 3,200 | 12,601 |
+
+My role changed with it: from writing the code to designing the system, setting the rules and reviewing the
+agents' work - the same move I made at Microsoft from developer to engineering manager.
+
 ### The real machines, and the numbers
 
 Foundry runs on real hardware at home: 12 Mac minis on one shelf, a network switch and two battery backups.

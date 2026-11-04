@@ -119,6 +119,28 @@ release, test, risk, infrastructure and others - each decide one thing and hand 
 
 ![Foundry: the whole system](foundry/fig1_system.png)
 
+### The real machines, and the numbers
+
+Foundry runs on real hardware at home: 12 Mac minis on one shelf, a network switch and two battery backups.
+The system is **self-managed** - AI manager roles (project, release, test, infrastructure and others) pick the
+next work, decide what ships and keep the machines healthy, while I set the direction and approve by exception -
+and it **improves itself every iteration**: every bug found becomes a pinned test, and every fix goes back
+through the full test gate before it can merge.
+
+![Foundry build farm: 12 Mac minis on one shelf](foundry/machine_farm_photo.jpg)
+
+Measured on **November 4, 2026** from the live records - and still growing every day:
+
+| | |
+|---|---|
+| Tests run on every change before it can merge | **40,480** |
+| Gated check-ins through Crucible (since July 10, 2026) | **9,959** |
+| Merged after passing the gate | 5,932 |
+| Stopped before master (2,967 failed tests, 823 merge conflicts) | **3,790** |
+| Bugs tracked in the bug database | 20,121 |
+| Bugs resolved with a shipped fix | 5,226 |
+| Codebase | ~1.4M lines of Python + ~0.8M lines of tests |
+
 The full design, with the bug lifecycle, a check-in's path through Crucible and the machine farm by role:
 **[Foundry design](https://taijizhu.github.io/tide-wave/foundry/)**.
 
